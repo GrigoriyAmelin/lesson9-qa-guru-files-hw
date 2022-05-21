@@ -6,6 +6,7 @@ import com.codeborne.xlstest.XLS;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.opencsv.CSVReader;
+import guru.qa.domain.Teacher;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -81,13 +82,24 @@ public class FilesParsingTest {
     }
 
     @Test
-    void jsonTest() throws Exception {
+    void jsonCommonTest() throws Exception {
         Gson gson = new Gson();
         try (InputStream is = classloader.getResourceAsStream("files/simple.json")) {
             String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
             assertThat(jsonObject.get("name").getAsString()).isEqualTo("Gregory");
             assertThat(jsonObject.get("address").getAsJsonObject().get("street").getAsString()).isEqualTo("Lenina");
+        }
+    }
+
+    @Test
+    void jsonTypeTest() throws Exception {
+        Gson gson = new Gson();
+        try (InputStream is = classloader.getResourceAsStream("files/simple.json")) {
+            String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            Teacher jsonObject = gson.fromJson(json, Teacher.class);
+            assertThat(jsonObject.name).isEqualTo("Gregory");
+            assertThat(jsonObject.address.street).isEqualTo("Lenina");
         }
     }
 }
