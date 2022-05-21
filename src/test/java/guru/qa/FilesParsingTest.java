@@ -3,14 +3,17 @@ package guru.qa;
 import com.codeborne.pdftest.PDF;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.xlstest.XLS;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.opencsv.CSVReader;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Text;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -74,6 +77,17 @@ public class FilesParsingTest {
             while ((entry = zis.getNextEntry()) != null) {
                 assertThat(entry.getName()).isEqualTo("7729314745_03214643000000017300_001_0521.txt");
             }
+        }
+    }
+
+    @Test
+    void jsonTest() throws Exception {
+        Gson gson = new Gson();
+        try (InputStream is = classloader.getResourceAsStream("files/simple.json")) {
+            String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
+            assertThat(jsonObject.get("name").getAsString()).isEqualTo("Gregory");
+            assertThat(jsonObject.get("address").getAsJsonObject().get("street").getAsString()).isEqualTo("Lenina");
         }
     }
 }
